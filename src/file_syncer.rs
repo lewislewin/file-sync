@@ -1,4 +1,5 @@
-use std::fs;
+use std::fs::File;
+use std::{fs, io};
 use std::path::Path;
 
 use crate::file_scanner::FileState;
@@ -22,6 +23,9 @@ pub fn synchronize_files(
                         fs::create_dir_all(parent).unwrap();
                     }
                     fs::copy(&source_path, &target_path).unwrap();
+
+                    // Copy file metadata
+                    copy_metadata(&source_path, &target_path).unwrap();
                 }
             }
             FileState::Deleted if delete => {
@@ -33,4 +37,12 @@ pub fn synchronize_files(
             _ => {}
         }
     }
+}
+
+fn copy_metadata(source: &Path, target: &Path) -> io::Result<()> {
+    let metadata = fs::metadata(source)?;
+    let modified_time = metadata.modified()?;
+
+    let file = File::open(target)?;
+    filetime::set_file_mtime(target, filetime::FileTime::from_system_time(modified_time))
 }
