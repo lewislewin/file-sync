@@ -22,12 +22,12 @@ struct Args {
 }
 
 fn main() {
-    let args = Args::parse();
+    let args: Args = Args::parse();
     
-    let config = Config::new(Some(args.source), Some(args.target), None, None);
+    let config: Config = Config::new(Some(args.source), Some(args.target), None, None);
 
     println!("Starting synchronization...");
-    let changes = compare_directories(&config.source_dir, &config.target_dir);
+    let changes: Vec<(String, file_scanner::FileState)> = compare_directories(&config.source_dir, &config.target_dir);
 
     for (file, state) in &changes {
         println!("{:?}: {}", state, file);

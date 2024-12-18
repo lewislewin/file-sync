@@ -15,7 +15,7 @@ pub enum FileState {
 
 /// Scan a directory and return a map of relative paths to file metadata
 pub fn scan_directory(path: &str) -> HashMap<String, Metadata> {
-    let mut files = HashMap::new();
+    let mut files: HashMap<String, Metadata> = HashMap::new();
     for entry in walkdir::WalkDir::new(path)
         .into_iter()
         .filter_map(|e| e.ok())
@@ -41,17 +41,17 @@ fn files_are_different(source_path: &Path, target_path: &Path, source_meta: &Met
     }
 
     // As a last resort, compare file contents using a hash
-    let source_hash = compute_file_hash(source_path);
-    let target_hash = compute_file_hash(target_path);
+    let source_hash: Option<u64> = compute_file_hash(source_path);
+    let target_hash: Option<u64> = compute_file_hash(target_path);
 
     source_hash != target_hash
 }
 
 /// Compute a simple hash of the file content
 fn compute_file_hash(path: &Path) -> Option<u64> {
-    let mut file = fs::File::open(path).ok()?;
-    let mut hasher = std::collections::hash_map::DefaultHasher::new();
-    let mut buffer = [0; 8192];
+    let mut file: fs::File = fs::File::open(path).ok()?;
+    let mut hasher: std::hash::DefaultHasher = std::collections::hash_map::DefaultHasher::new();
+    let mut buffer: [u8; 8192] = [0; 8192];
 
     while let Ok(read_bytes) = file.read(&mut buffer) {
         if read_bytes == 0 {
@@ -65,15 +65,15 @@ fn compute_file_hash(path: &Path) -> Option<u64> {
 
 /// Compare source and target directories
 pub fn compare_directories(source: &str, target: &str) -> Vec<(String, FileState)> {
-    let source_files = scan_directory(source);
-    let target_files = scan_directory(target);
+    let source_files: HashMap<String, Metadata> = scan_directory(source);
+    let target_files: HashMap<String, Metadata> = scan_directory(target);
 
-    let mut changes = Vec::new();
+    let mut changes: Vec<(String, FileState)> = Vec::new();
 
     for (path, source_meta) in &source_files {
         if let Some(target_meta) = target_files.get(path) {
-            let source_path = Path::new(source).join(path);
-            let target_path = Path::new(target).join(path);
+            let source_path: std::path::PathBuf = Path::new(source).join(path);
+            let target_path: std::path::PathBuf = Path::new(target).join(path);
 
             if files_are_different(&source_path, &target_path, source_meta, target_meta) {
                 changes.push((path.clone(), FileState::Modified));

@@ -12,8 +12,8 @@ pub fn synchronize_files(
     delete: bool,
 ) {
     for (file, state) in changes {
-        let source_path = Path::new(source).join(&file);
-        let target_path = Path::new(target).join(&file);
+        let source_path: std::path::PathBuf = Path::new(source).join(&file);
+        let target_path: std::path::PathBuf = Path::new(target).join(&file);
 
         match state {
             FileState::New | FileState::Modified => {
@@ -40,8 +40,8 @@ pub fn synchronize_files(
 }
 
 fn copy_metadata(source: &Path, target: &Path) -> io::Result<()> {
-    let metadata = fs::metadata(source)?;
-    let modified_time = metadata.modified()?;
+    let metadata: fs::Metadata = fs::metadata(source)?;
+    let modified_time: std::time::SystemTime = metadata.modified()?;
 
     let _file = File::open(target)?;
     filetime::set_file_mtime(target, filetime::FileTime::from_system_time(modified_time))
