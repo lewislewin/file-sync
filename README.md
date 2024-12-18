@@ -1,0 +1,1 @@
+A rust tool for comparing and syncing two directories.
