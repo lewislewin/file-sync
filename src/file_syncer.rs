@@ -43,6 +43,6 @@ fn copy_metadata(source: &Path, target: &Path) -> io::Result<()> {
     let metadata = fs::metadata(source)?;
     let modified_time = metadata.modified()?;
 
-    let file = File::open(target)?;
+    let _file = File::open(target)?;
     filetime::set_file_mtime(target, filetime::FileTime::from_system_time(modified_time))
 }

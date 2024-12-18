@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::fs::{self, Metadata};
 use std::hash::Hasher;
 use std::path::Path;
-use std::io::{Read};
+use std::io::Read;
 use std::time::SystemTime;
 
 #[derive(Debug, PartialEq, Clone)]
