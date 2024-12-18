@@ -7,9 +7,24 @@ use config::Config;
 use file_scanner::compare_directories;
 use file_syncer::synchronize_files;
 use logger::log_action;
+use clap::{arg, Parser};
+
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+struct Args {
+    /// Source directory
+    #[arg(short, long)]
+    source: String,
+
+    /// Target directory
+    #[arg(short, long)]
+    target: String,
+}
 
 fn main() {
-    let config = Config::new();
+    let args = Args::parse();
+    
+    let config = Config::new(Some(args.source), Some(args.target), None, None);
 
     println!("Starting synchronization...");
     let changes = compare_directories(&config.source_dir, &config.target_dir);
